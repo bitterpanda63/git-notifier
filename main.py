@@ -20,15 +20,21 @@ BRANCHES = [config.get('branches', key) for key in config['branches']]
 hashes = dict()
 
 
+def on_start():
+    git.fetch_origin()
+    start_msg = f"Starting git-tracker"
+    for branch in BRANCHES:
+        latest_hash = git.get_hash(branch)
+        if not branch in hashes:
+            start_msg += f"\n🌟 Started tracking for **{branch}** (current hash: *{latest_hash}*)"
+            hashes[branch] = latest_hash
+    notifier.send_notification(start_msg)
+
+
 def cycle():
     git.fetch_origin()
     for branch in BRANCHES:
         latest_hash = git.get_hash(branch)
-
-        if not branch in hashes:
-            notifier.send_notification(f"🌟 Started tracking for **{branch}** (current hash: *{latest_hash}*)")
-            hashes[branch] = latest_hash
-
         if hashes[branch] != latest_hash:
             latest_commit_msg = git.get_latest_commit_message(branch)
             msg = f"🚀 Branch **{branch}** got updated\n"
@@ -42,5 +48,6 @@ def cycle():
 
 
 if __name__ == "__main__":
+    on_start()
     while True:
         cycle()
