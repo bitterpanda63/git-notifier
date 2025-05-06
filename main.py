@@ -33,7 +33,7 @@ def cycle():
             latest_commit_msg = git.get_latest_commit_message(branch)
             msg = f"🚀 Branch **{branch}** got updated\n"
             msg += f"* Latest Hash: *{latest_hash}*\n"
-            msg += f"* Latest Commit Message: *{latest_commit_msg}*"
+            msg += f"* Latest Commit Message: ```{latest_commit_msg}```"
 
             notifier.send_notification(msg)
             hashes[branch] = latest_hash
